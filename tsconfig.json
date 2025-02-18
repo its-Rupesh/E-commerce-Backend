@@ -1,0 +1,13 @@
+{
+  // compilerOptions
+  // This section defines how TypeScript should compile the code.
+  "compilerOptions": {
+  
+    "target": "ES2020",// Specifies the version in which TypeScript code should be compiled to
+    "module": "NodeNext",   //  Specifies the ECMAScript version the TypeScript code should be compiled to Easy import and export                             
+    "rootDir": "src",                                  
+    "moduleResolution": "nodenext",                    
+    "outDir": "dist",     
+    "strict": true,// Enable Strict Checking                      
+  }
+}
