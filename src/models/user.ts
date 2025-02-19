@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 import validator from "validator";
-
-interface IUser extends Document {
-  _id: string;
-  name: string;
-  email: string;
-  photo: string;
-  gender: "male" | "female";
-  dob: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  // Virtual Attribute
-  age: number;
-}
+import { IUser } from "../types/types.js";
+// interface IUser extends Document {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   photo: string;
+//   gender: "male" | "female";
+//   dob: Date;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   // Virtual Attribute
+//   age: number;
+// }
 
 const schema = new mongoose.Schema(
   {
@@ -36,7 +36,7 @@ const schema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin","user"],
+      enum: ["admin", "user"],
       default: "user",
     },
     gender: {

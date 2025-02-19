@@ -1,5 +1,17 @@
 import mongoose from "mongoose";
 import validator from "validator";
+// interface IUser extends Document {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   photo: string;
+//   gender: "male" | "female";
+//   dob: Date;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   // Virtual Attribute
+//   age: number;
+// }
 const schema = new mongoose.Schema({
     _id: {
         type: String,
