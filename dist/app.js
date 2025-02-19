@@ -1,7 +1,7 @@
 import express from "express";
-import { connectDb } from "./utils/feature.js";
-import userRoute from "./routes/user.js";
 import errorMiddleware from "./middleware/error.js";
+import userRoute from "./routes/user.js";
+import { connectDb } from "./utils/feature.js";
 const PORT = 8000;
 const app = express();
 connectDb();

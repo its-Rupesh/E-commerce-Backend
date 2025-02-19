@@ -1,8 +1,13 @@
-export class CustomError extends Error {
-  statusCode: number; // explitly declare Type of statusCode
-  constructor(message: string = "Something Went Wrong", statusCode?: number) {
-    super(message); // call Constructor in Error
-    this.statusCode = statusCode ?? 500; // Declare statusCode Field in Error
-    Object.setPrototypeOf(this, CustomError.prototype); // Use for Properly Inherit Error Class Property
+export class ErrorHandler extends Error {
+  statusCode: number;
+
+  constructor(error: string | Error, statusCode?: number) {
+    super(typeof error === "string" ? error : error.message);
+    this.statusCode = statusCode ?? 500;
+
+    if (error instanceof Error) {
+      this.stack = error.stack; // Retains Original Stack
+    }
+    Object.setPrototypeOf(this, ErrorHandler.prototype);
   }
 }

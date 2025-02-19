@@ -1,10 +1,10 @@
 import { User } from "../models/user.js";
-import { CustomError } from "../middleware/error_object.js";
+import { ErrorHandler } from "../middleware/error_object.js";
 export const newUser = async (req, res, next) => {
     try {
         // next(new CustomError("Custom error", 404));
         // next(new CustomError("Error"));
-        next(new CustomError());
+        // next(new ErrorHandler());
         const { name, email, photo, _id, gender, dob } = req.body;
         const user = await User.create({
             name,
@@ -20,9 +20,6 @@ export const newUser = async (req, res, next) => {
         });
     }
     catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: error,
-        });
+        next(new ErrorHandler(error, 404));
     }
 };
