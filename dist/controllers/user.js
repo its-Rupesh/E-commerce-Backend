@@ -1,5 +1,6 @@
 import { User } from "../models/user.js";
 import { ErrorHandler } from "../middleware/error_object.js";
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const newUser = async (req, res, next) => {
     try {
         const { name, email, photo, _id, gender, dob } = req.body;

@@ -1,11 +1,4 @@
-interface NewUserRequestBody {
-  name: string;
-  email: string;
-  photo: string;
-  gender: string;
-  dob: Date;
-  _id: string;
-}
+// Used in Creating User-Model
 interface IUser extends Document {
   _id: string;
   name: string;
@@ -19,4 +12,20 @@ interface IUser extends Document {
   // Virtual Attribute
   age: number;
 }
-export { NewUserRequestBody, IUser };
+// Used in Definig New-Request
+interface NewUserRequestBody {
+  name: string;
+  email: string;
+  photo: string;
+  gender: string;
+  dob: Date;
+  _id: string;
+}
+// Used in Definig New-Product-Request
+interface NewProductRequestBody {
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+}
+export { IUser, NewUserRequestBody, NewProductRequestBody };

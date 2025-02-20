@@ -3,6 +3,7 @@ import { User } from "../models/user.js";
 import { NewUserRequestBody } from "../types/types.js";
 import { ErrorHandler } from "../middleware/error_object.js";
 
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const newUser = async (
   req: Request<{}, {}, NewUserRequestBody>,
   res: Response,
