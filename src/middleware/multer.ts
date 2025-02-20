@@ -1,12 +1,15 @@
 import multer from "multer";
-
+import { v4 as uuid } from "uuid";
 // Storage Created
 const storage = multer.diskStorage({
   destination(req, file, callback) {
     callback(null, "upload");
   },
   filename(req, file, callback) {
-    callback(null, file.originalname);
+    const id = uuid();
+    const extname = file.originalname.split(".").pop();
+    const filename = `${id}.${extname}`;
+    callback(null, filename);
   },
 });
 
