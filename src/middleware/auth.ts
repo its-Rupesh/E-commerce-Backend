@@ -10,7 +10,6 @@ const adminOnly = async (req: Request, res: Response, next: NextFunction) => {
     if (!id) return next(new ErrorHandler("Please Login First..!!", 401));
 
     const user = await User.findById(id);
-
     if (!user) return next(new ErrorHandler("No Such User Present", 401));
 
     if (user.role !== "admin")
