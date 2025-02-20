@@ -44,4 +44,46 @@ const getlatestProduct = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-export { newproduct, getlatestProduct };
+const getAllCategories = async (req, res, next) => {
+    try {
+        const category = await Products.distinct("category");
+        return res.status(200).json({
+            success: true,
+            message: category,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(new ErrorHandler(error));
+    }
+};
+const getAdminProducts = async (req, res, next) => {
+    try {
+        const products = await Products.find({});
+        return res.status(200).json({
+            success: true,
+            message: products,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(new ErrorHandler(error));
+    }
+};
+const getSingleProducts = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const product = await Products.findById(id);
+        if (!product)
+            return next(new ErrorHandler("Product Not Found", 404));
+        return res.status(200).json({
+            success: true,
+            message: product,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(new ErrorHandler(error));
+    }
+};
+export { newproduct, getlatestProduct, getAllCategories, getAdminProducts, getSingleProducts, };
