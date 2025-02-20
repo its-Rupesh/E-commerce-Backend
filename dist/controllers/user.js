@@ -4,8 +4,9 @@ import { ErrorHandler } from "../middleware/error_object.js";
 const newUser = async (req, res, next) => {
     try {
         const { name, email, photo, _id, gender, dob } = req.body;
-        if (!_id || !name || !email || !photo || !gender || !dob)
+        if (!_id || !name || !email || !photo || !gender || !dob) {
             return next(new ErrorHandler("Add All Feilds", 400));
+        }
         let user = await User.findById(_id);
         if (user)
             return res.status(200).json({

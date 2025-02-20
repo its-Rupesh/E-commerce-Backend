@@ -12,9 +12,10 @@ const newUser = async (
   try {
     const { name, email, photo, _id, gender, dob } = req.body;
 
-    if (!_id || !name || !email || !photo || !gender || !dob)
+    if (!_id || !name || !email || !photo || !gender || !dob) {
+      
       return next(new ErrorHandler("Add All Feilds", 400));
-
+    }
     let user = await User.findById(_id);
 
     if (user)
