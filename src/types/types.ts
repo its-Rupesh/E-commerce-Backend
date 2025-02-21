@@ -28,4 +28,16 @@ interface NewProductRequestBody {
   price: number;
   stock: number;
 }
-export { IUser, NewUserRequestBody, NewProductRequestBody };
+type UpdateproductFeilds = {
+  name: string;
+  price: number;
+  stock: number;
+  category: string;
+  photo: string;
+};
+export {
+  IUser,
+  NewUserRequestBody,
+  NewProductRequestBody,
+  UpdateproductFeilds,
+};

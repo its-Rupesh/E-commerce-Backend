@@ -5,6 +5,7 @@ import {
   getlatestProduct,
   getSingleProducts,
   newproduct,
+  updateSingleProduct,
 } from "../controllers/products.js";
 import { adminOnly } from "../middleware/auth.js";
 import { singleUpload } from "../middleware/multer.js";
@@ -16,6 +17,6 @@ app.get("/latest", getlatestProduct);
 app.get("/categorys", getAllCategories);
 app.get("/admin-products", getAdminProducts);
 
-app.route("/:id").get(getSingleProducts);
+app.route("/:id").get(getSingleProducts).put(singleUpload, updateSingleProduct);
 
 export default app;

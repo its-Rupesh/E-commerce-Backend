@@ -1,6 +1,11 @@
-import Products from "../models/product.js";
+import fs, { rm } from "fs";
+import path from "path";
 import { ErrorHandler } from "../middleware/error_object.js";
-import { rm } from "fs";
+import Products from "../models/product.js";
+import { fileURLToPath } from "url";
+// Manually define `__dirname`
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 //Request<Params, ResBody, ReqBody, ReqQuery>
 const newproduct = async (req, res, next) => {
     try {
@@ -14,7 +19,7 @@ const newproduct = async (req, res, next) => {
             });
             return next(new ErrorHandler("Please Enter All Feild", 400));
         }
-        await Products.create({
+        const product = await Products.create({
             name,
             price,
             category: category.toLowerCase(),
@@ -24,6 +29,7 @@ const newproduct = async (req, res, next) => {
         res.json({
             success: true,
             message: "Product Added Succesffully..!!",
+            product,
         });
     }
     catch (error) {
@@ -86,4 +92,32 @@ const getSingleProducts = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-export { newproduct, getlatestProduct, getAllCategories, getAdminProducts, getSingleProducts, };
+const updateSingleProduct = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updateFeilds = req.body;
+        const product = await Products.findById(id);
+        if (!product)
+            return next(new ErrorHandler("Invalid Product Id..!!", 404));
+        if (req.file) {
+            const newPhoto = req.file.path;
+            if (product.photo) {
+                const oldphoto = path.join(__dirname, "../upload", product.photo);
+                if (fs.existsSync(oldphoto)) {
+                    fs.unlinkSync(oldphoto);
+                }
+            }
+            updateFeilds.photo = newPhoto;
+        }
+        const updateProduct = await Products.findByIdAndUpdate(id, { $set: updateFeilds }, { new: true, runValidators: true });
+        res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            product: updateProduct,
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler(error));
+    }
+};
+export { getAdminProducts, getAllCategories, getlatestProduct, getSingleProducts, newproduct, updateSingleProduct, };
