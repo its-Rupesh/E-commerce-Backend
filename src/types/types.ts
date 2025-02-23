@@ -28,6 +28,7 @@ interface NewProductRequestBody {
   price: number;
   stock: number;
 }
+//Update Feild
 type UpdateproductFeilds = {
   name: string;
   price: number;
@@ -35,9 +36,29 @@ type UpdateproductFeilds = {
   category: string;
   photo: string;
 };
+type searchProductFeilds = {
+  search: string;
+  price: string;
+  category: string;
+  sort: string;
+  page: string;
+};
+// Used for Searching Product ## Operator ka interface
+interface baseQueryType {
+  name: {
+    $regex: string;
+    $options: string;
+  };
+  price: {
+    $lte: number;
+  };
+  category: string;
+}
 export {
   IUser,
   NewUserRequestBody,
   NewProductRequestBody,
   UpdateproductFeilds,
+  searchProductFeilds,
+  baseQueryType,
 };

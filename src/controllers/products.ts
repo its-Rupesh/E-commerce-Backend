@@ -3,7 +3,12 @@ import fs, { rm } from "fs";
 import path from "path";
 import { ErrorHandler } from "../middleware/error_object.js";
 import Products from "../models/product.js";
-import { NewProductRequestBody, UpdateproductFeilds } from "../types/types.js";
+import {
+  baseQueryType,
+  NewProductRequestBody,
+  searchProductFeilds,
+  UpdateproductFeilds,
+} from "../types/types.js";
 
 import { fileURLToPath } from "url";
 
@@ -46,6 +51,7 @@ const newproduct = async (
   }
 };
 
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const getlatestProduct = async (
   req: Request<{}, {}, {}>,
   res: Response,
@@ -78,6 +84,8 @@ const getAllCategories = async (
     next(new ErrorHandler(error as Error));
   }
 };
+
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const getAdminProducts = async (
   req: Request<{}, {}, {}>,
   res: Response,
@@ -112,6 +120,8 @@ const getSingleProducts = async (
     next(new ErrorHandler(error as Error));
   }
 };
+
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const updateSingleProduct = async (
   req: Request<{ id: string }, {}, Partial<UpdateproductFeilds>>,
   res: Response,
@@ -149,6 +159,8 @@ const updateSingleProduct = async (
     next(new ErrorHandler(error as Error));
   }
 };
+
+//Request<Params, ResBody, ReqBody, ReqQuery>
 const deleteProduct = async (
   req: Request<{ id: string }, {}, {}>,
   res: Response,
@@ -173,6 +185,48 @@ const deleteProduct = async (
     next(new ErrorHandler(error as Error));
   }
 };
+
+//Request<Params, ResBody, ReqBody, ReqQuery>
+const searchProduct = async (
+  req: Request<{}, {}, {}, Partial<searchProductFeilds>>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // const product = await Products.find({}).sort({ createdAt: -1 }).limit(5);
+    const { search, price, category, sort } = req.query;
+
+    let page = Number(req.query.page) || 1;
+    let limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+    let skip = (page - 1) * limit;
+
+    const baseQuery: Partial<baseQueryType> = {};
+
+    if (search) baseQuery.name = { $regex: search, $options: "i" };
+    if (price) baseQuery.price = { $lte: Number(price) };
+    if (category) baseQuery.category = category;
+
+    const productsPromise = Products.find(baseQuery)
+      .sort(sort && { price: sort === "asc" ? 1 : -1 })
+      .limit(limit)
+      .skip(skip);
+
+    const [product, filteredProducts] = await Promise.all([
+      productsPromise,
+      Products.find(baseQuery),
+    ]);
+
+    const totalPage = Math.ceil(filteredProducts.length / limit);
+
+    return res.status(200).json({
+      success: true,
+      message: product,
+      totalPage,
+    });
+  } catch (error) {
+    next(new ErrorHandler(error as Error));
+  }
+};
 export {
   getAdminProducts,
   getAllCategories,
@@ -181,4 +235,5 @@ export {
   newproduct,
   updateSingleProduct,
   deleteProduct,
+  searchProduct,
 };
