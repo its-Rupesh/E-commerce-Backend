@@ -120,4 +120,23 @@ const updateSingleProduct = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-export { getAdminProducts, getAllCategories, getlatestProduct, getSingleProducts, newproduct, updateSingleProduct, };
+const deleteProduct = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const product = await Products.findById(id);
+        if (!product)
+            return next(new ErrorHandler("Invalid Product Id..!!", 404));
+        rm(product.photo, () => {
+            console.log("Old Photo Deleted");
+        });
+        await Products.findByIdAndDelete(id);
+        res.status(200).json({
+            success: true,
+            message: "Product Deleted successfully",
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler(error));
+    }
+};
+export { getAdminProducts, getAllCategories, getlatestProduct, getSingleProducts, newproduct, updateSingleProduct, deleteProduct, };

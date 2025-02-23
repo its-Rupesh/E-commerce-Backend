@@ -149,7 +149,30 @@ const updateSingleProduct = async (
     next(new ErrorHandler(error as Error));
   }
 };
+const deleteProduct = async (
+  req: Request<{ id: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
 
+    const product = await Products.findById(id);
+    if (!product) return next(new ErrorHandler("Invalid Product Id..!!", 404));
+
+    rm(product.photo!, () => {
+      console.log("Old Photo Deleted");
+    });
+
+    await Products.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "Product Deleted successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error as Error));
+  }
+};
 export {
   getAdminProducts,
   getAllCategories,
@@ -157,4 +180,5 @@ export {
   getSingleProducts,
   newproduct,
   updateSingleProduct,
+  deleteProduct,
 };
