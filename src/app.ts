@@ -3,12 +3,13 @@ import errorMiddleware from "./middleware/error.js";
 import userRoute from "./routes/user.js";
 import products from "./routes/products.js";
 import { connectDb } from "./utils/feature.js";
+import NodeCache from "node-cache";
 
 const PORT = 8000;
 const app = express();
 
 connectDb();
-
+export const myCache = new NodeCache();
 //Middleware...
 app.use(express.json());
 

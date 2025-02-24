@@ -3,6 +3,7 @@ import path from "path";
 import { ErrorHandler } from "../middleware/error_object.js";
 import Products from "../models/product.js";
 import { fileURLToPath } from "url";
+import { myCache } from "../app.js";
 // Manually define `__dirname`
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,10 +38,21 @@ const newproduct = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-//Request<Params, ResBody, ReqBody, ReqQuery>
-const getlatestProduct = async (req, res, next) => {
+// Revaluate Cache on New or Update,New Order,Delete Product
+const getlatestProduct = async (req, //Request<Params, ResBody, ReqBody, ReqQuery>
+res, next) => {
     try {
-        const products = await Products.find({}).sort({ createdAt: -1 }).limit(5);
+        let products;
+        if (myCache.has("getlatestProduct")) {
+            let productData = myCache.get("getlatestProduct");
+            products = JSON.parse(productData);
+        }
+        else {
+            products = await Products.find({}).sort({ createdAt: -1 }).limit(5);
+            myCache.set("getlatestProduct", JSON.stringify(products), 600);
+        }
+        // stringify-->converts a JavaScript object or array into a JSON-formatted (string)
+        //JSON.parse() converts a JSON string back into a JavaScript object or array.
         return res.status(200).json({
             success: true,
             message: products,
@@ -51,9 +63,17 @@ const getlatestProduct = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
+// Revaluate Cache on New or Update,New Order,Delete Product
 const getAllCategories = async (req, res, next) => {
     try {
-        const category = await Products.distinct("category");
+        let category;
+        if (myCache.has("getAllCategories")) {
+            category = JSON.parse(myCache.get("getAllCategories"));
+        }
+        else {
+            category = await Products.distinct("category");
+            myCache.set("getAllCategories", JSON.stringify(category), 600);
+        }
         return res.status(200).json({
             success: true,
             message: category,
@@ -64,10 +84,18 @@ const getAllCategories = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
+// Revaluate Cache on New or Update,New Order,Delete Product
 //Request<Params, ResBody, ReqBody, ReqQuery>
 const getAdminProducts = async (req, res, next) => {
     try {
-        const products = await Products.find({});
+        let products;
+        if (myCache.has("products")) {
+            products = JSON.parse(myCache.get("products"));
+        }
+        else {
+            products = await Products.find({});
+            myCache.set("products", JSON.stringify(products), 600);
+        }
         return res.status(200).json({
             success: true,
             message: products,
@@ -81,9 +109,16 @@ const getAdminProducts = async (req, res, next) => {
 const getSingleProducts = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const product = await Products.findById(id);
-        if (!product)
-            return next(new ErrorHandler("Product Not Found", 404));
+        let product;
+        if (myCache.has(`getSingleProducts-${id}`)) {
+            product = JSON.parse(myCache.get(`getSingleProducts-${id}`));
+        }
+        else {
+            product = await Products.findById(id);
+            if (!product)
+                return next(new ErrorHandler("Product Not Found", 404));
+            myCache.set(`getSingleProducts-${id}`, JSON.stringify(product), 600);
+        }
         return res.status(200).json({
             success: true,
             message: product,
