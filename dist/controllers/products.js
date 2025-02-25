@@ -4,6 +4,7 @@ import { ErrorHandler } from "../middleware/error_object.js";
 import Products from "../models/product.js";
 import { fileURLToPath } from "url";
 import { myCache } from "../app.js";
+import { invalidateCache } from "../utils/feature.js";
 // Manually define `__dirname`
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,7 @@ const newproduct = async (req, res, next) => {
             stock,
             photo: photo.path,
         });
+        await invalidateCache({ products: true });
         res.json({
             success: true,
             message: "Product Added Succesffully..!!",
@@ -53,6 +55,7 @@ res, next) => {
         }
         // stringify-->converts a JavaScript object or array into a JSON-formatted (string)
         //JSON.parse() converts a JSON string back into a JavaScript object or array.
+        await invalidateCache({ products: true });
         return res.status(200).json({
             success: true,
             message: products,
@@ -74,6 +77,7 @@ const getAllCategories = async (req, res, next) => {
             category = await Products.distinct("category");
             myCache.set("getAllCategories", JSON.stringify(category), 600);
         }
+        await invalidateCache({ products: true });
         return res.status(200).json({
             success: true,
             message: category,
@@ -89,13 +93,14 @@ const getAllCategories = async (req, res, next) => {
 const getAdminProducts = async (req, res, next) => {
     try {
         let products;
-        if (myCache.has("products")) {
-            products = JSON.parse(myCache.get("products"));
+        if (myCache.has("getAdminproducts")) {
+            products = JSON.parse(myCache.get("getAdminproducts"));
         }
         else {
             products = await Products.find({});
-            myCache.set("products", JSON.stringify(products), 600);
+            myCache.set("getAdminproducts", JSON.stringify(products), 600);
         }
+        await invalidateCache({ products: true });
         return res.status(200).json({
             success: true,
             message: products,
@@ -119,6 +124,7 @@ const getSingleProducts = async (req, res, next) => {
                 return next(new ErrorHandler("Product Not Found", 404));
             myCache.set(`getSingleProducts-${id}`, JSON.stringify(product), 600);
         }
+        await invalidateCache({ products: true });
         return res.status(200).json({
             success: true,
             message: product,

@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { invalidateCache as invalidateCacheProps } from "../types/types.js";
 import Products from "../models/product.js";
 import { myCache } from "../app.js";
-export const connectDb = () => {
+export const connectDb = (url: string) => {
   mongoose
-    .connect("mongodb://localhost:27017", { dbName: "QuickMart" })
+    .connect(url, { dbName: "QuickMart" })
     .then((c) => console.log(`DB Connected to ${c.connection.host}`))
     .catch((e) => console.log(e));
 };
