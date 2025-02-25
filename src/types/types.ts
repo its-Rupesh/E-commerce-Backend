@@ -54,6 +54,7 @@ interface baseQueryType {
   };
   category: string;
 }
+type invalidateCache = { products: boolean; order: boolean; admin: boolean };
 export {
   IUser,
   NewUserRequestBody,
@@ -61,4 +62,5 @@ export {
   UpdateproductFeilds,
   searchProductFeilds,
   baseQueryType,
+  invalidateCache,
 };

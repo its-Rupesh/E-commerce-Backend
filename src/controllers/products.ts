@@ -13,6 +13,7 @@ import {
 import { fileURLToPath } from "url";
 import { myCache } from "../app.js";
 import { stringify } from "querystring";
+import { invalidateCache } from "../utils/feature.js";
 
 // Manually define `__dirname`
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +43,7 @@ const newproduct = async (
       stock,
       photo: photo.path,
     });
+    await invalidateCache({ products: true });
     res.json({
       success: true,
       message: "Product Added Succesffully..!!",
@@ -70,6 +72,8 @@ const getlatestProduct = async (
     }
     // stringify-->converts a JavaScript object or array into a JSON-formatted (string)
     //JSON.parse() converts a JSON string back into a JavaScript object or array.
+
+    await invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: products,
@@ -94,6 +98,7 @@ const getAllCategories = async (
       category = await Products.distinct("category");
       myCache.set("getAllCategories", JSON.stringify(category), 600);
     }
+    await invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: category,
@@ -113,12 +118,13 @@ const getAdminProducts = async (
 ) => {
   try {
     let products;
-    if (myCache.has("products")) {
-      products = JSON.parse(myCache.get("products") as string);
+    if (myCache.has("getAdminproducts")) {
+      products = JSON.parse(myCache.get("getAdminproducts") as string);
     } else {
       products = await Products.find({});
-      myCache.set("products", JSON.stringify(products), 600);
+      myCache.set("getAdminproducts", JSON.stringify(products), 600);
     }
+    await invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: products,
@@ -143,6 +149,7 @@ const getSingleProducts = async (
       if (!product) return next(new ErrorHandler("Product Not Found", 404));
       myCache.set(`getSingleProducts-${id}`, JSON.stringify(product), 600);
     }
+    await invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: product,
