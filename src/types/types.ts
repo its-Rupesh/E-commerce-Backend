@@ -54,7 +54,38 @@ interface baseQueryType {
   };
   category: string;
 }
-type invalidateCache = { products: boolean; order: boolean; admin: boolean };
+type invalidateCache = {
+  products: boolean;
+  order: boolean;
+  admin: boolean;
+};
+
+// New Order -->Req.body
+
+type ShippingInfoType = {
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pinCode: number;
+};
+type OrderItemType = {
+  name: string;
+  photo: string;
+  price: number;
+  quantity: number;
+  productId: string;
+};
+interface NewOrderRequestFeild {
+  shippingInfo: ShippingInfoType;
+  user: string;
+  subTotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  Total: number;
+  orderItem: OrderItemType[];
+}
 export {
   IUser,
   NewUserRequestBody,
@@ -63,4 +94,6 @@ export {
   searchProductFeilds,
   baseQueryType,
   invalidateCache,
+  NewOrderRequestFeild,
+  OrderItemType,
 };

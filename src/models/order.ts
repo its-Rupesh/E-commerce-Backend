@@ -14,7 +14,7 @@ const schema = new mongoose.Schema(
         required: [true, "Please Enter city"],
       },
       state: {
-        type: Number,
+        type: String,
         required: [true, "Please Enter state"],
       },
       country: {

@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
             required: [true, "Please Enter city"],
         },
         state: {
-            type: Number,
+            type: String,
             required: [true, "Please Enter state"],
         },
         country: {
@@ -20,12 +20,50 @@ const schema = new mongoose.Schema({
         pinCode: {
             type: Number,
             required: [true, "Please Enter pinCode"],
-            trim: true,
         },
     },
     user: {
-        type
-    }
+        type: String,
+        ref: "User",
+        required: [true, "Please Enter user-id"],
+    },
+    subTotal: {
+        type: Number,
+        required: [true, "Please Enter subTotal"],
+    },
+    tax: {
+        type: Number,
+        required: true,
+    },
+    shippingCharges: {
+        type: Number,
+        required: true,
+    },
+    discount: {
+        type: Number,
+        required: true,
+    },
+    Total: {
+        type: Number,
+        required: true,
+    },
+    status: {
+        type: String,
+        enum: ["Processing", "Shipped", "Deliverd"],
+        default: "Processing",
+    },
+    orderItem: [
+        {
+            name: String,
+            photo: String,
+            price: Number,
+            quantity: Number,
+            productId: {
+                type: mongoose.Types.ObjectId,
+                ref: "Products",
+            },
+        },
+    ],
 }, { timestamps: true });
 const Order = mongoose.model("Order", schema);
 export default Order;

@@ -16,4 +16,8 @@ const adminOnly = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-export { adminOnly };
+const debug = (req, res, next) => {
+    console.log("Middleware: Received Request Body", req.body);
+    next();
+};
+export { adminOnly, debug };

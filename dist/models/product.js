@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
         required: [true, "Please Enter price"],
     },
     stock: {
-        type: String,
+        type: Number,
         required: [true, "Please Enter Stock"],
     },
     category: {

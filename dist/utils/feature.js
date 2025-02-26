@@ -1,12 +1,15 @@
 import mongoose from "mongoose";
 import Products from "../models/product.js";
 import { myCache } from "../app.js";
+import { ErrorHandler } from "../middleware/error_object.js";
+// Connect MongoDB
 export const connectDb = (url) => {
     mongoose
         .connect(url, { dbName: "QuickMart" })
         .then((c) => console.log(`DB Connected to ${c.connection.host}`))
         .catch((e) => console.log(e));
 };
+// Expires NodeCaching
 export const invalidateCache = async ({ products, order, admin, }) => {
     if (products) {
         const productKeys = [
@@ -19,5 +22,16 @@ export const invalidateCache = async ({ products, order, admin, }) => {
             productKeys.push(`getSingleProducts-${i._id}`);
         });
         myCache.del(productKeys);
+    }
+};
+// Reduce Stock
+export const reduceStock = async (orderItem) => {
+    for (let i = 0; i < orderItem.length; i++) {
+        const order = orderItem[i];
+        const product = await Products.findById(order.productId);
+        if (!product)
+            throw new ErrorHandler("No Product");
+        product.stock -= order.quantity;
+        await product.save();
     }
 };
