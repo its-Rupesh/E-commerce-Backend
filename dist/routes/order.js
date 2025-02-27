@@ -1,6 +1,8 @@
 import express from "express";
-import { newOrder } from "../controllers/oders.js";
-import { debug } from "../middleware/auth.js";
+import { getMyOrder, newOrder, allOrder } from "../controllers/oders.js";
+import { adminOnly } from "../middleware/auth.js";
 const app = express.Router();
-app.post("/newOrder", debug, newOrder);
+app.post("/newOrder", newOrder);
+app.get("/myOrder", getMyOrder);
+app.get("/allOrder", adminOnly, allOrder);
 export default app;
