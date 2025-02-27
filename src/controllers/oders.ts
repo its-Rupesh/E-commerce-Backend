@@ -39,7 +39,7 @@ const newOrder = async (
       tax,
       shippingCharges,
       discount,
-      Total,
+      Total ,
       orderItem,
     });
     await reduceStock(orderItem);
