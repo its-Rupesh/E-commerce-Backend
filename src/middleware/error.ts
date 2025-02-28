@@ -7,9 +7,12 @@ const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = err instanceof ErrorHandler ? err.statusCode : 500;
-  const message = err.message || "Internal Server Error";
-
+  let statusCode = err instanceof ErrorHandler ? err.statusCode : 500;
+  let message = err.message || "Internal Server Error";
+  if (err.name === "CastError") {
+    statusCode = 400;
+    message = "Invalid ID format";
+  }
   return res.status(statusCode).json({
     success: false,
     message,

@@ -6,6 +6,7 @@ import {
 import Products from "../models/product.js";
 import { myCache } from "../app.js";
 import { ErrorHandler } from "../middleware/error_object.js";
+import Order from "../models/order.js";
 
 // Connect MongoDB
 export const connectDb = (url: string) => {
@@ -20,18 +21,33 @@ export const invalidateCache = async ({
   products,
   order,
   admin,
+  userId,
+  orderId,
+  productId,
 }: Partial<invalidateCacheProps>) => {
-  if (products) {
+  if (products){
     const productKeys: string[] = [
       "getlatestProduct",
       "getAllCategories",
       "getAdminproducts",
     ];
-    const products_id = await Products.find({}).select("_id");
-    products_id.forEach((i) => {
-      productKeys.push(`getSingleProducts-${i._id}`);
-    });
+    if (typeof productId === "string") {
+      productKeys.push(`getSingleProducts-${productId}`);
+    }
+    if (typeof productId === "object") {
+      productId.forEach((i) =>
+        productKeys.push(`getSingleProducts-${i}`)
+      );
+    }
     myCache.del(productKeys);
+  }
+  if (order) {
+    const orderKeys: string[] = [
+      "getAllOrder",
+      `getMyOrder-${userId}`,
+      `getSingleOrder-${orderId}`,
+    ];
+    myCache.del(orderKeys);
   }
 };
 // Reduce Stock

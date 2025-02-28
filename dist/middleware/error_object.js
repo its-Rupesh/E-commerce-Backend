@@ -4,6 +4,7 @@ export class ErrorHandler extends Error {
         this.statusCode = statusCode ?? 500;
         if (error instanceof Error) {
             this.stack = error.stack; // Retains Original Stack
+            this.name = error.name;
         }
         Object.setPrototypeOf(this, ErrorHandler.prototype);
     }

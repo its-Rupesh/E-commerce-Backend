@@ -27,34 +27,49 @@ const newUser = async (req, res, next) => {
         });
     }
     catch (error) {
-        next(new ErrorHandler(error, 404));
+        next(new ErrorHandler(error));
     }
 };
 const allUser = async (req, res, next) => {
-    const user = await User.find({});
-    return res.status(200).json({
-        success: true,
-        user,
-    });
+    try {
+        const user = await User.find({});
+        return res.status(200).json({
+            success: true,
+            user,
+        });
+    }
+    catch (err) {
+        next(new ErrorHandler(err));
+    }
 };
 const getUser = async (req, res, next) => {
-    const Userid = req.params.id;
-    const user = await User.findById(Userid);
-    if (!user)
-        return next(new ErrorHandler("Invalid User Id", 400));
-    return res.status(200).json({
-        success: true,
-        user,
-    });
+    try {
+        const Userid = req.params.id;
+        const user = await User.findById(Userid);
+        if (!user)
+            return next(new ErrorHandler("Invalid User Id", 400));
+        return res.status(200).json({
+            success: true,
+            user,
+        });
+    }
+    catch (err) {
+        next(new ErrorHandler(err));
+    }
 };
 const deleteUser = async (req, res, next) => {
-    const Userid = req.params.id;
-    const user = await User.findByIdAndDelete(Userid);
-    if (!user)
-        return next(new ErrorHandler("User-Id Not Present", 400));
-    return res.status(200).json({
-        success: true,
-        message: "User is Deleted Sucessfully",
-    });
+    try {
+        const Userid = req.params.id;
+        const user = await User.findByIdAndDelete(Userid);
+        if (!user)
+            return next(new ErrorHandler("User-Id Not Present", 400));
+        return res.status(200).json({
+            success: true,
+            message: "User is Deleted Sucessfully",
+        });
+    }
+    catch (err) {
+        next(new ErrorHandler(err));
+    }
 };
 export { newUser, allUser, getUser, deleteUser };

@@ -13,7 +13,6 @@ const newUser = async (
     const { name, email, photo, _id, gender, dob } = req.body;
 
     if (!_id || !name || !email || !photo || !gender || !dob) {
-      
       return next(new ErrorHandler("Add All Feilds", 400));
     }
     let user = await User.findById(_id);
@@ -38,38 +37,50 @@ const newUser = async (
       message: user,
     });
   } catch (error) {
-    next(new ErrorHandler(error as Error, 404));
+    next(new ErrorHandler(error as Error));
   }
 };
 const allUser = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await User.find({});
+  try {
+    const user = await User.find({});
 
-  return res.status(200).json({
-    success: true,
-    user,
-  });
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (err) {
+    next(new ErrorHandler(err as Error));
+  }
 };
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
-  const Userid = req.params.id;
-  const user = await User.findById(Userid);
+  try {
+    const Userid = req.params.id;
+    const user = await User.findById(Userid);
 
-  if (!user) return next(new ErrorHandler("Invalid User Id", 400));
+    if (!user) return next(new ErrorHandler("Invalid User Id", 400));
 
-  return res.status(200).json({
-    success: true,
-    user,
-  });
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (err) {
+    next(new ErrorHandler(err as Error));
+  }
 };
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  const Userid = req.params.id;
+  try {
+    const Userid = req.params.id;
 
-  const user = await User.findByIdAndDelete(Userid);
+    const user = await User.findByIdAndDelete(Userid);
 
-  if (!user) return next(new ErrorHandler("User-Id Not Present", 400));
+    if (!user) return next(new ErrorHandler("User-Id Not Present", 400));
 
-  return res.status(200).json({
-    success: true,
-    message: "User is Deleted Sucessfully",
-  });
+    return res.status(200).json({
+      success: true,
+      message: "User is Deleted Sucessfully",
+    });
+  } catch (err) {
+    next(new ErrorHandler(err as Error));
+  }
 };
 export { newUser, allUser, getUser, deleteUser };

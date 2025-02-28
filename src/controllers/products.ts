@@ -189,7 +189,8 @@ const updateSingleProduct = async (
       { $set: updateFeilds },
       { new: true, runValidators: true }
     );
-    res.status(200).json({
+    await invalidateCache({ products: true, productId: String(product._id) });
+    return res.status(200).json({
       success: true,
       message: "Product updated successfully",
       product: updateProduct,
@@ -209,14 +210,15 @@ const deleteProduct = async (
     const id = req.params.id;
 
     const product = await Products.findById(id);
-    if (!product) return next(new ErrorHandler("Invalid Product Id..!!", 404));
+    if (!product) return next(new ErrorHandler("Product Not Found..!!", 404));
 
     rm(product.photo!, () => {
       console.log("Old Photo Deleted");
     });
 
     await Products.findByIdAndDelete(id);
-    res.status(200).json({
+    await invalidateCache({ products: true, productId: String(product._id) });
+    return res.status(200).json({
       success: true,
       message: "Product Deleted successfully",
     });

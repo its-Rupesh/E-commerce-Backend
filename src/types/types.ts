@@ -58,6 +58,9 @@ type invalidateCache = {
   products: boolean;
   order: boolean;
   admin: boolean;
+  userId: string;
+  orderId: string;
+  productId: string | string[];
 };
 
 // New Order -->Req.body

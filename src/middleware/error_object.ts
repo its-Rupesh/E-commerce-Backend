@@ -7,6 +7,7 @@ export class ErrorHandler extends Error {
 
     if (error instanceof Error) {
       this.stack = error.stack; // Retains Original Stack
+      this.name = error.name;
     }
     Object.setPrototypeOf(this, ErrorHandler.prototype);
   }

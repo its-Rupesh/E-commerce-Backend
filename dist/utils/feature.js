@@ -10,18 +10,28 @@ export const connectDb = (url) => {
         .catch((e) => console.log(e));
 };
 // Expires NodeCaching
-export const invalidateCache = async ({ products, order, admin, }) => {
+export const invalidateCache = async ({ products, order, admin, userId, orderId, productId, }) => {
     if (products) {
         const productKeys = [
             "getlatestProduct",
             "getAllCategories",
             "getAdminproducts",
         ];
-        const products_id = await Products.find({}).select("_id");
-        products_id.forEach((i) => {
-            productKeys.push(`getSingleProducts-${i._id}`);
-        });
+        if (typeof productId === "string") {
+            productKeys.push(`getSingleProducts-${productId}`);
+        }
+        if (typeof productId === "object") {
+            productId.forEach((i) => productKeys.push(`getSingleProducts-${i}`));
+        }
         myCache.del(productKeys);
+    }
+    if (order) {
+        const orderKeys = [
+            "getAllOrder",
+            `getMyOrder-${userId}`,
+            `getSingleOrder-${orderId}`,
+        ];
+        myCache.del(orderKeys);
     }
 };
 // Reduce Stock

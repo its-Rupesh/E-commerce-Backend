@@ -34,7 +34,7 @@ const newOrder = async (
     ) {
       return next(new ErrorHandler("Please Enter All Feilds", 400));
     }
-    await Order.create({
+    const order = await Order.create({
       shippingInfo,
       user,
       subTotal,
@@ -45,7 +45,14 @@ const newOrder = async (
       orderItem,
     });
     await reduceStock(orderItem);
-    await invalidateCache({ products: true, order: true, admin: true });
+
+    await invalidateCache({
+      products: true,
+      order: true,
+      admin: true,
+      userId: user,
+      productId: order.orderItem.map((i) => String(i.productId)),
+    });
 
     return res.status(200).json({
       success: true,
@@ -103,4 +110,104 @@ const allOrder = async (
     next(new ErrorHandler(error as Error));
   }
 };
-export { newOrder, getMyOrder, allOrder };
+
+const getSingleOrder = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    let order;
+    const key = `getSingleOrder-${id}`;
+    if (myCache.has(key)) {
+      order = JSON.parse(myCache.get(key)!);
+    } else {
+      order = await Order.findById(id);
+      if (!order) return next(new ErrorHandler("Order Not Found!!", 400));
+      myCache.set(key, JSON.stringify(order));
+    }
+    return res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error as Error));
+  }
+};
+
+const processOrder = async (
+  req: Request<{ id: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next(new ErrorHandler("Order Not Found", 404));
+
+    // Changing product feild
+    if (order.status === "Processing") {
+      order.status = "Shipped";
+    } else if (order.status === "Shipped") order.status = "Deliverd";
+    else {
+      order.status = "Deliverd";
+    }
+
+    await order.save();
+
+    invalidateCache({
+      products: false,
+      order: true,
+      admin: true,
+      userId: order.user,
+      orderId: String(order._id),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Ordered Processed Successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error as Error));
+  }
+};
+
+const deleteOrder = async (
+  req: Request<{ id: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next(new ErrorHandler("Order Not Found", 404));
+
+    // Changing product feild
+
+    await order.deleteOne();
+
+    invalidateCache({
+      products: false,
+      order: true,
+      admin: true,
+      userId: order.user,
+      orderId: String(order._id),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Ordered Deleted Successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error as Error));
+  }
+};
+export {
+  newOrder,
+  getMyOrder,
+  allOrder,
+  getSingleOrder,
+  processOrder,
+  deleteOrder,
+};
