@@ -25,7 +25,7 @@ export const invalidateCache = async ({
   orderId,
   productId,
 }: Partial<invalidateCacheProps>) => {
-  if (products){
+  if (products) {
     const productKeys: string[] = [
       "getlatestProduct",
       "getAllCategories",
@@ -35,9 +35,7 @@ export const invalidateCache = async ({
       productKeys.push(`getSingleProducts-${productId}`);
     }
     if (typeof productId === "object") {
-      productId.forEach((i) =>
-        productKeys.push(`getSingleProducts-${i}`)
-      );
+      productId.forEach((i) => productKeys.push(`getSingleProducts-${i}`));
     }
     myCache.del(productKeys);
   }
@@ -59,4 +57,10 @@ export const reduceStock = async (orderItem: OrderItemType[]) => {
     product.stock -= order.quantity;
     await product.save();
   }
+};
+
+export const calaculatePercentage = (thisMonth: number, lastMonth: number) => {
+  if (lastMonth === 0) return thisMonth * 100;
+  const precent = ((thisMonth - lastMonth) / lastMonth) * 100;
+  return Number(precent.toFixed(0));
 };

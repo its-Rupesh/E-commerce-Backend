@@ -4,6 +4,7 @@ import userRoute from "./routes/user.js";
 import products from "./routes/products.js";
 import orders from "./routes/order.js";
 import payement from "./routes/payment.js";
+import stats from "./routes/stats.js"; //Dashboard
 //Middleware
 import errorMiddleware from "./middleware/error.js";
 // Utils
@@ -29,6 +30,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/products", products);
 app.use("/api/v1/orders", orders);
 app.use("/api/v1/payment", payement);
+app.use("/api/v1/dashboard", stats);
 //Middleware
 app.use("/upload", express.static("upload")); //Fetching img from upload folder
 app.use(errorMiddleware); // Error Middleware
