@@ -3,7 +3,7 @@ import { myCache } from "../app.js";
 import Products from "../models/product.js";
 import { User } from "../models/user.js";
 import Order from "../models/order.js";
-import { calaculatePercentage, getCategory } from "../utils/feature.js";
+import { calaculatePercentage, getCategory, } from "../utils/feature.js";
 const getDashboardStats = async (req, res, next) => {
     try {
         let stats = {};
@@ -202,6 +202,75 @@ const getPieStats = async (req, res, next) => {
 };
 const getBarStats = async (req, res, next) => {
     try {
+        let charts;
+        const key = "admin-bar-charts";
+        if (myCache.has(key)) {
+            charts = JSON.parse(myCache.get(key));
+        }
+        else {
+            const today = new Date();
+            const sixMonthAgo = new Date();
+            sixMonthAgo.setMonth(today.getMonth() - 6);
+            const twelveMonthAgo = new Date(); // Corrected spelling
+            twelveMonthAgo.setMonth(today.getMonth() - 12); // Corrected calculation
+            const twelveMonthOrdersPromise = Order.find({
+                createdAt: { $gte: twelveMonthAgo, $lte: today },
+            })
+                .select("createdAt")
+                .lean();
+            const SixMonthProductPromise = Products.find({
+                createdAt: { $gte: sixMonthAgo, $lte: today },
+            })
+                .select("createdAt")
+                .lean(); // .lean() ensures plain JavaScript objects
+            const SixMonthUserPromise = User.find({
+                createdAt: { $gte: sixMonthAgo, $lte: today },
+            })
+                .select("createdAt")
+                .lean();
+            const [SixMonthProduct, SixMonthUser, twelveMonthOrders] = await Promise.all([
+                SixMonthProductPromise,
+                SixMonthUserPromise,
+                twelveMonthOrdersPromise,
+            ]);
+            // Calculate product data counts
+            const Productdata = new Array(6).fill(0);
+            SixMonthProduct.forEach((i) => {
+                const creationDate = new Date(i.createdAt); // Ensure it's a Date object
+                const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+                if (monthDiff < 6) {
+                    Productdata[6 - monthDiff - 1] += 1;
+                }
+            });
+            // Calculate user data counts
+            const Userdata = new Array(6).fill(0);
+            SixMonthUser.forEach((i) => {
+                const creationDate = new Date(i.createdAt);
+                const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+                if (monthDiff < 6) {
+                    Userdata[6 - monthDiff - 1] += 1;
+                }
+            });
+            // Calculate order data counts
+            const Orderdata = new Array(12).fill(0);
+            twelveMonthOrders.forEach((i) => {
+                const creationDate = new Date(i.createdAt);
+                const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+                if (monthDiff < 12) {
+                    Orderdata[6 - monthDiff - 1] += 1;
+                }
+            });
+            charts = {
+                products: Productdata,
+                users: Userdata,
+                orders: Orderdata,
+            };
+            myCache.set(key, JSON.stringify(charts));
+        }
+        return res.status(200).json({
+            success: true,
+            charts,
+        });
     }
     catch (error) {
         next(new ErrorHandler(error));
