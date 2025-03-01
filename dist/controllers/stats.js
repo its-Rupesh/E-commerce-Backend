@@ -3,7 +3,7 @@ import { myCache } from "../app.js";
 import Products from "../models/product.js";
 import { User } from "../models/user.js";
 import Order from "../models/order.js";
-import { calaculatePercentage } from "../utils/feature.js";
+import { calaculatePercentage, getCategory } from "../utils/feature.js";
 const getDashboardStats = async (req, res, next) => {
     try {
         let stats = {};
@@ -77,7 +77,7 @@ const getDashboardStats = async (req, res, next) => {
             const orderMonthRevenue = new Array(6).fill(0);
             lastSixMonthOrder.forEach((order) => {
                 const creationDate = order.createdAt;
-                const monthDiff = today.getMonth() - creationDate.getMonth();
+                const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
                 if (monthDiff < 6) {
                     orderMonthCounts[6 - monthDiff - 1] += 1;
                     orderMonthRevenue[6 - monthDiff - 1] += order.Total;
@@ -129,6 +129,72 @@ const getDashboardStats = async (req, res, next) => {
 };
 const getPieStats = async (req, res, next) => {
     try {
+        let charts;
+        if (myCache.has("admin-pie-charts")) {
+            charts = JSON.parse(myCache.get("admin-pie-charts"));
+        }
+        else {
+            const [ProcessingCount, ShippedCount, DeliverdCount, categories, ProductCount, ProductOutofStock, allOrder, allUser, allUserwithadmin, customerUser,] = await Promise.all([
+                Order.countDocuments({ status: "Processing" }),
+                Order.countDocuments({ status: "Shipped" }),
+                Order.countDocuments({ status: "Deliverd" }),
+                Products.distinct("category"),
+                Products.countDocuments(),
+                Products.countDocuments({ stock: 0 }),
+                Order.find({}).select([
+                    "Total",
+                    "discount",
+                    "subTotal",
+                    "tax",
+                    "shippingCharges",
+                ]),
+                User.find({}).select(["dob"]),
+                User.countDocuments({ role: "admin" }),
+                User.countDocuments({ role: "user" }),
+            ]);
+            const orderFullFillement = {
+                processing: ProcessingCount,
+                shipped: ShippedCount,
+                delivered: DeliverdCount,
+            };
+            const categoryCount = await getCategory({ categories, ProductCount });
+            const stockAvailablity = {
+                inStock: ProductCount - ProductOutofStock,
+                outOfStock: ProductOutofStock,
+            };
+            const grossIncome = allOrder.reduce((prev, order) => prev + order.Total || 0, 0);
+            const discount = allOrder.reduce((prev, order) => prev + order.discount || 0, 0);
+            const productionCost = allOrder.reduce((prev, order) => prev + order.shippingCharges || 0, 0);
+            const burnt = allOrder.reduce((prev, order) => prev + order.tax || 0, 0);
+            const marketingCost = Math.round(grossIncome * (30 / 100));
+            const netMargin = grossIncome - discount - productionCost - burnt - marketingCost;
+            const revenueDistribution = {
+                netMargin,
+                discount,
+                productionCost,
+                burnt,
+                marketingCost,
+            };
+            const userAgeGroup = {
+                teen: allUser.filter((i) => i.age < 20).length,
+                adult: allUser.filter((i) => i.age >= 20 && i.age <= 40).length,
+                old: allUser.filter((i) => i.age > 40).length,
+            };
+            const adminCustomer = { admin: allUserwithadmin, customer: customerUser };
+            charts = {
+                orderFullFillement,
+                categoryCount,
+                stockAvailablity,
+                revenueDistribution,
+                userAgeGroup,
+                adminCustomer,
+            };
+            myCache.set("admin-pie-charts", JSON.stringify(charts));
+        }
+        return res.status(200).json({
+            succes: true,
+            charts,
+        });
     }
     catch (error) {
         next(new ErrorHandler(error));

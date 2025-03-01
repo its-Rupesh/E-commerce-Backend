@@ -61,6 +61,28 @@ export const reduceStock = async (orderItem: OrderItemType[]) => {
 
 export const calaculatePercentage = (thisMonth: number, lastMonth: number) => {
   if (lastMonth === 0) return thisMonth * 100;
-  const precent = ((thisMonth - lastMonth) / lastMonth) * 100;
+  const precent = (thisMonth / lastMonth) * 100;
   return Number(precent.toFixed(0));
+};
+
+export const getCategory = async ({
+  categories,
+  ProductCount,
+}: {
+  categories: string[];
+  ProductCount: number;
+}) => {
+  const categoriescountPromise = categories.map((category) =>
+    Products.countDocuments({ category })
+  );
+  const categoriescount = await Promise.all(categoriescountPromise);
+
+  const categoryCount: Array<{ [key: string]: number }> = [];
+
+  categories.forEach((category, i) => {
+    categoryCount.push({
+      [category]: Math.round((categoriescount[i] / ProductCount) * 100),
+    });
+  });
+  return categoryCount;
 };
