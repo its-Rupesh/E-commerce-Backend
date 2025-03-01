@@ -26,7 +26,7 @@ const newOrder = async (req, res, next) => {
             orderItem,
         });
         await reduceStock(orderItem);
-        await invalidateCache({
+        invalidateCache({
             products: true,
             order: true,
             admin: true,

@@ -43,7 +43,7 @@ const newproduct = async (
       stock,
       photo: photo.path,
     });
-    await invalidateCache({ products: true });
+    invalidateCache({ products: true, admin: true });
     res.json({
       success: true,
       message: "Product Added Succesffully..!!",
@@ -73,7 +73,7 @@ const getlatestProduct = async (
     // stringify-->converts a JavaScript object or array into a JSON-formatted (string)
     //JSON.parse() converts a JSON string back into a JavaScript object or array.
 
-    await invalidateCache({ products: true });
+    invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: products,
@@ -98,7 +98,7 @@ const getAllCategories = async (
       category = await Products.distinct("category");
       myCache.set("getAllCategories", JSON.stringify(category), 600);
     }
-    await invalidateCache({ products: true });
+    invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: category,
@@ -124,7 +124,7 @@ const getAdminProducts = async (
       products = await Products.find({});
       myCache.set("getAdminproducts", JSON.stringify(products), 600);
     }
-    await invalidateCache({ products: true });
+    invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: products,
@@ -149,7 +149,7 @@ const getSingleProducts = async (
       if (!product) return next(new ErrorHandler("Product Not Found", 404));
       myCache.set(`getSingleProducts-${id}`, JSON.stringify(product), 600);
     }
-    await invalidateCache({ products: true });
+    invalidateCache({ products: true });
     return res.status(200).json({
       success: true,
       message: product,
@@ -189,7 +189,11 @@ const updateSingleProduct = async (
       { $set: updateFeilds },
       { new: true, runValidators: true }
     );
-    await invalidateCache({ products: true, productId: String(product._id) });
+    invalidateCache({
+      products: true,
+      productId: String(product._id),
+      admin: true,
+    });
     return res.status(200).json({
       success: true,
       message: "Product updated successfully",
@@ -217,7 +221,11 @@ const deleteProduct = async (
     });
 
     await Products.findByIdAndDelete(id);
-    await invalidateCache({ products: true, productId: String(product._id) });
+    invalidateCache({
+      products: true,
+      productId: String(product._id),
+      admin: true,
+    });
     return res.status(200).json({
       success: true,
       message: "Product Deleted successfully",

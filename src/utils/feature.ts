@@ -17,7 +17,7 @@ export const connectDb = (url: string) => {
 };
 
 // Expires NodeCaching
-export const invalidateCache = async ({
+export const invalidateCache = ({
   products,
   order,
   admin,
@@ -46,6 +46,14 @@ export const invalidateCache = async ({
       `getSingleOrder-${orderId}`,
     ];
     myCache.del(orderKeys);
+  }
+  if (admin) {
+    myCache.del([
+      "admin-stats",
+      "admin-pie-charts",
+      "admin-bar-charts",
+      "admin-line-charts",
+    ]);
   }
 };
 // Reduce Stock

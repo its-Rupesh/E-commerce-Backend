@@ -10,7 +10,7 @@ export const connectDb = (url) => {
         .catch((e) => console.log(e));
 };
 // Expires NodeCaching
-export const invalidateCache = async ({ products, order, admin, userId, orderId, productId, }) => {
+export const invalidateCache = ({ products, order, admin, userId, orderId, productId, }) => {
     if (products) {
         const productKeys = [
             "getlatestProduct",
@@ -32,6 +32,14 @@ export const invalidateCache = async ({ products, order, admin, userId, orderId,
             `getSingleOrder-${orderId}`,
         ];
         myCache.del(orderKeys);
+    }
+    if (admin) {
+        myCache.del([
+            "admin-stats",
+            "admin-pie-charts",
+            "admin-bar-charts",
+            "admin-line-charts",
+        ]);
     }
 };
 // Reduce Stock
