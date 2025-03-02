@@ -4,7 +4,7 @@ import {
   newCoupon,
   getAllCoupon,
   deleteCoupon,
-  createPayementRequest,
+  // createPayementRequest,
 } from "../controllers/payement.js";
 import { paramsChecker } from "../middleware/feature.js";
 import { adminOnly } from "../middleware/auth.js";
@@ -21,9 +21,5 @@ app.get("/coupon/all", adminOnly, getAllCoupon);
 
 // Delete Coupon
 app.delete("/coupon/delete/:id?", adminOnly, paramsChecker, deleteCoupon);
-
-// Not Working
-// Stripe Payement
-app.post("/create", createPayementRequest);
 
 export default app;

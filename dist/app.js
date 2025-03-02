@@ -1,18 +1,17 @@
 import express from "express";
 //Routes
-import userRoute from "./routes/user.js";
-import products from "./routes/products.js";
 import orders from "./routes/order.js";
 import payement from "./routes/payment.js";
+import products from "./routes/products.js";
 import stats from "./routes/stats.js"; //Dashboard
+import userRoute from "./routes/user.js";
 //Middleware
 import errorMiddleware from "./middleware/error.js";
 // Utils
-import { connectDb } from "./utils/feature.js";
-import NodeCache from "node-cache";
 import { config } from "dotenv";
 import morgan from "morgan";
-import Stripe from "stripe"; // Stripe
+import NodeCache from "node-cache";
+import { connectDb } from "./utils/feature.js";
 const app = express();
 //Env Setting
 config({
@@ -20,12 +19,9 @@ config({
 });
 // .env Variable
 const MongoDbUrl = process.env.MONGO_URL || "";
-const stripeKey = process.env.STRIPE_KEY || "";
 //Mongo Connection
 connectDb(MongoDbUrl);
 const PORT = process.env.PORT || 8000;
-//Stripe
-export const stripe = new Stripe(stripeKey);
 //Caching
 export const myCache = new NodeCache();
 //Middleware...

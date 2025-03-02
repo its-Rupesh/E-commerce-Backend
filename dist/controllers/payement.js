@@ -1,6 +1,5 @@
 import { ErrorHandler } from "../middleware/error_object.js";
 import Coupon from "../models/coupon.js";
-import { stripe } from "../app.js";
 const newCoupon = async (req, res, next) => {
     try {
         const { coupon, amount } = req.body;
@@ -63,21 +62,4 @@ const deleteCoupon = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-const createPayementRequest = async (req, res, next) => {
-    try {
-        const { amount } = req.body;
-        if (!amount)
-            return next(new ErrorHandler("Please Enter Amount..!!"));
-        const payementIntent = await stripe.paymentIntents.create({
-            amount: Number(amount) * 100,
-            currency: "inr",
-            payment_method_types: ["card"],
-        });
-        res.json({ clientSecret: payementIntent.client_secret });
-    }
-    catch (error) {
-        console.log(error);
-        next(new ErrorHandler(error));
-    }
-};
-export { newCoupon, applyDiscount, getAllCoupon, deleteCoupon, createPayementRequest, };
+export { applyDiscount, deleteCoupon, getAllCoupon, newCoupon };
