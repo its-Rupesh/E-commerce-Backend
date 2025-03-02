@@ -12,15 +12,21 @@ import { connectDb } from "./utils/feature.js";
 import NodeCache from "node-cache";
 import { config } from "dotenv";
 import morgan from "morgan";
+import Stripe from "stripe"; // Stripe
 const app = express();
 //Env Setting
 config({
     path: "./.env",
 });
-//Mongo Connection
+// .env Variable
 const MongoDbUrl = process.env.MONGO_URL || "";
+const stripeKey = process.env.STRIPE_KEY || "";
+//Mongo Connection
 connectDb(MongoDbUrl);
 const PORT = process.env.PORT || 8000;
+//Stripe
+export const stripe = new Stripe(stripeKey);
+//Caching
 export const myCache = new NodeCache();
 //Middleware...
 app.use(express.json());
