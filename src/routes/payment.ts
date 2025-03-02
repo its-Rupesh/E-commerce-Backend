@@ -22,6 +22,7 @@ app.get("/coupon/all", adminOnly, getAllCoupon);
 // Delete Coupon
 app.delete("/coupon/delete/:id?", adminOnly, paramsChecker, deleteCoupon);
 
+// Not Working
 // Stripe Payement
 app.post("/create", createPayementRequest);
 
