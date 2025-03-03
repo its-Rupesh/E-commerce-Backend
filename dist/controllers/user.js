@@ -23,7 +23,8 @@ const newUser = async (req, res, next) => {
         });
         return res.status(200).json({
             success: true,
-            message: user,
+            message: `Welcome ${user.name}`,
+            user,
         });
     }
     catch (error) {

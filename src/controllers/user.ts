@@ -34,7 +34,8 @@ const newUser = async (
 
     return res.status(200).json({
       success: true,
-      message: user,
+      message: `Welcome ${user.name}`,
+      user,
     });
   } catch (error) {
     next(new ErrorHandler(error as Error));

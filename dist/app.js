@@ -12,6 +12,8 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import NodeCache from "node-cache";
 import { connectDb } from "./utils/feature.js";
+// Cors
+import cors from "cors";
 const app = express();
 //Env Setting
 config({
@@ -27,6 +29,7 @@ export const myCache = new NodeCache();
 //Middleware...
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:8000"] }));
 // Routes...
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/products", products);
