@@ -20,7 +20,8 @@ const newUser = async (
     if (user)
       return res.status(200).json({
         success: true,
-        message: `Welcome ${user.name}`,
+        message: `Welcome Back ${user.name}`,
+        user,
       });
 
     user = await User.create({
