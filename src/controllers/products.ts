@@ -246,7 +246,7 @@ const searchProduct = async (
     const { search, price, category, sort } = req.query;
 
     let page = Number(req.query.page) || 1;
-    let limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+    let limit = Number(process.env.PRODUCT_PER_PAGE) || 6;
     let skip = (page - 1) * limit;
 
     const baseQuery: Partial<baseQueryType> = {};

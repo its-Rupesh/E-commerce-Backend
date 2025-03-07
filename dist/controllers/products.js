@@ -200,7 +200,7 @@ const searchProduct = async (req, res, next) => {
         // const product = await Products.find({}).sort({ createdAt: -1 }).limit(5);
         const { search, price, category, sort } = req.query;
         let page = Number(req.query.page) || 1;
-        let limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+        let limit = Number(process.env.PRODUCT_PER_PAGE) || 6;
         let skip = (page - 1) * limit;
         const baseQuery = {};
         if (search)
