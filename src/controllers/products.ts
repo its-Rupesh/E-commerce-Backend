@@ -167,11 +167,11 @@ const updateSingleProduct = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params.id;
+    const productId = req.params.id;
 
     const updateFeilds: Partial<UpdateproductFeilds> = req.body;
 
-    const product = await Products.findById(id);
+    const product = await Products.findById(productId);
     if (!product) return next(new ErrorHandler("Invalid Product Id..!!", 404));
 
     if (req.file) {
@@ -185,7 +185,7 @@ const updateSingleProduct = async (
       updateFeilds.photo = newPhoto;
     }
     const updateProduct = await Products.findByIdAndUpdate(
-      id,
+      productId,
       { $set: updateFeilds },
       { new: true, runValidators: true }
     );
@@ -197,7 +197,7 @@ const updateSingleProduct = async (
     return res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      product: updateProduct,
+      // product: updateProduct,
     });
   } catch (error) {
     next(new ErrorHandler(error as Error));

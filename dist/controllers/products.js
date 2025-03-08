@@ -138,9 +138,9 @@ const getSingleProducts = async (req, res, next) => {
 //Request<Params, ResBody, ReqBody, ReqQuery>
 const updateSingleProduct = async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const productId = req.params.id;
         const updateFeilds = req.body;
-        const product = await Products.findById(id);
+        const product = await Products.findById(productId);
         if (!product)
             return next(new ErrorHandler("Invalid Product Id..!!", 404));
         if (req.file) {
@@ -153,7 +153,7 @@ const updateSingleProduct = async (req, res, next) => {
             }
             updateFeilds.photo = newPhoto;
         }
-        const updateProduct = await Products.findByIdAndUpdate(id, { $set: updateFeilds }, { new: true, runValidators: true });
+        const updateProduct = await Products.findByIdAndUpdate(productId, { $set: updateFeilds }, { new: true, runValidators: true });
         invalidateCache({
             products: true,
             productId: String(product._id),
@@ -162,7 +162,7 @@ const updateSingleProduct = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "Product updated successfully",
-            product: updateProduct,
+            // product: updateProduct,
         });
     }
     catch (error) {

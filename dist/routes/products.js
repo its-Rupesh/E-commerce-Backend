@@ -3,7 +3,7 @@ import { deleteProduct, getAdminProducts, getAllCategories, getlatestProduct, ge
 import { adminOnly } from "../middleware/auth.js";
 import { singleUpload } from "../middleware/multer.js";
 const app = express.Router();
-app.post("/new", adminOnly, singleUpload, newproduct);
+app.post("/new", singleUpload, newproduct);
 app.get("/search", searchProduct);
 app.get("/latest", getlatestProduct);
 app.get("/categorys", getAllCategories);
@@ -12,5 +12,5 @@ app
     .route("/:id")
     .get(getSingleProducts)
     .put(adminOnly, singleUpload, updateSingleProduct)
-    .delete(deleteProduct);
+    .delete(adminOnly, deleteProduct);
 export default app;
