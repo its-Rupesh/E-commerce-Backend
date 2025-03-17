@@ -27,7 +27,7 @@ const applyDiscount = async (req, res, next) => {
             return next(new ErrorHandler("Invalid Coupon Code", 400));
         return res.status(200).json({
             success: true,
-            message: discount.amount,
+            discount: discount.amount,
         });
     }
     catch (error) {

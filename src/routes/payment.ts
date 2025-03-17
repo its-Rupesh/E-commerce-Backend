@@ -14,7 +14,7 @@ const app = express.Router();
 app.post("/coupon/new", adminOnly, newCoupon);
 
 // Apply Discount
-app.get("/discount", adminOnly, applyDiscount);
+app.get("/discount", applyDiscount);
 
 // All Coupon
 app.get("/coupon/all", adminOnly, getAllCoupon);

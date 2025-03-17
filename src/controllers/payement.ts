@@ -39,7 +39,7 @@ const applyDiscount = async (
 
     return res.status(200).json({
       success: true,
-      message: discount.amount,
+      discount: discount.amount,
     });
   } catch (error) {
     console.log(error);

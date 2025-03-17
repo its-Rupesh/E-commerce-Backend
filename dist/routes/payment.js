@@ -8,7 +8,7 @@ const app = express.Router();
 //NewCoupon
 app.post("/coupon/new", adminOnly, newCoupon);
 // Apply Discount
-app.get("/discount", adminOnly, applyDiscount);
+app.get("/discount", applyDiscount);
 // All Coupon
 app.get("/coupon/all", adminOnly, getAllCoupon);
 // Delete Coupon
