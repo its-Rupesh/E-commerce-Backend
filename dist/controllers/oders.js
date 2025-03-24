@@ -90,7 +90,7 @@ const getSingleOrder = async (req, res, next) => {
             order = JSON.parse(myCache.get(key));
         }
         else {
-            order = await Order.findById(id);
+            order = await Order.findById(id).populate("user", "name");
             if (!order)
                 return next(new ErrorHandler("Order Not Found!!", 400));
             myCache.set(key, JSON.stringify(order));
