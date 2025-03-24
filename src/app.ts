@@ -16,6 +16,8 @@ import morgan from "morgan";
 import NodeCache from "node-cache";
 import { connectDb } from "./utils/feature.js";
 
+import Razorpay from "razorpay";
+
 // Cors
 import cors from "cors";
 
@@ -41,6 +43,12 @@ export const myCache = new NodeCache();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors({ origin: ["http://localhost:5173", "http://localhost:8000"] }));
+
+//Razorpay Instance
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
 
 // Routes...
 app.use("/api/v1/user", userRoute);
