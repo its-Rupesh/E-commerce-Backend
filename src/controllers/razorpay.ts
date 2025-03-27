@@ -57,8 +57,8 @@ const createOrder = async (
 ) => {
   try {
     // Verify environment variables
-    const key_id = process.env.RAZORPAY_KEY_ID;
-    const key_secret = process.env.MONGO_URL;
+    const key_id = "rzp_test_rUfmF2MjJhTH93";
+    const key_secret = "Qqw2cySRM1cKRu40ZGfw6Mvy";
 
     if (!key_id || !key_secret) {
       return res.status(500).json({
