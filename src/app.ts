@@ -43,7 +43,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: [
-      "https://e-commerce-frontend-wheat.vercel.app/",
+      "https://e-commerce-frontend-wheat.vercel.app",
       "http://localhost:8000",
     ],
   })
