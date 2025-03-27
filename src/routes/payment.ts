@@ -4,6 +4,7 @@ import {
   newCoupon,
   getAllCoupon,
   deleteCoupon,
+  checknewCoupon,
   // createPayementRequest,
 } from "../controllers/payement.js";
 import { paramsChecker } from "../middleware/feature.js";

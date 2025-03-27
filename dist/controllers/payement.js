@@ -17,6 +17,25 @@ const newCoupon = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
+const checknewCoupon = async (req, res, next) => {
+    try {
+        const { coupon, amount } = req.body;
+        console.log(typeof coupon);
+        console.log(typeof amount);
+        console.log(req.body);
+        // const Createdcoupon = await Coupon.create({ coupon, amount });
+        return res.status(201).json({
+            success: true,
+            // Createdcoupon: Createdcoupon,
+            coupon,
+            amount,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next(new ErrorHandler(error));
+    }
+};
 const applyDiscount = async (req, res, next) => {
     try {
         if (!req.query.coupon)
@@ -62,4 +81,4 @@ const deleteCoupon = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-export { applyDiscount, deleteCoupon, getAllCoupon, newCoupon };
+export { applyDiscount, deleteCoupon, getAllCoupon, newCoupon, checknewCoupon };

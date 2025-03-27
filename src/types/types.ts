@@ -89,6 +89,15 @@ interface NewOrderRequestFeild {
   Total: number;
   orderItem: OrderItemType[];
 }
+//  RazorpayTypes {
+//   amount: string;
+//   currency: string;
+// }
+interface RazorpayOrderRequest {
+  amount: number;
+  currency?: string;
+}
+
 export {
   IUser,
   NewUserRequestBody,
@@ -99,4 +108,5 @@ export {
   invalidateCache,
   NewOrderRequestFeild,
   OrderItemType,
+  RazorpayOrderRequest,
 };

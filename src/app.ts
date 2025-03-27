@@ -6,7 +6,7 @@ import payement from "./routes/payment.js";
 import products from "./routes/products.js";
 import stats from "./routes/stats.js"; //Dashboard
 import userRoute from "./routes/user.js";
-
+import razorpayRoute from "./routes/razorpay.js";
 //Middleware
 import errorMiddleware from "./middleware/error.js";
 
@@ -15,8 +15,6 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import NodeCache from "node-cache";
 import { connectDb } from "./utils/feature.js";
-
-import Razorpay from "razorpay";
 
 // Cors
 import cors from "cors";
@@ -44,22 +42,17 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors({ origin: ["http://localhost:5173", "http://localhost:8000"] }));
 
-//Razorpay Instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_SECRET,
-});
-
 // Routes...
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/products", products);
 app.use("/api/v1/orders", orders);
 app.use("/api/v1/payment", payement);
 app.use("/api/v1/dashboard", stats);
+app.use("/api/v1/create-order", razorpayRoute);
 
 //Middleware
-app.use("/upload", express.static("upload")); //Fetching img from upload folder
 app.use(errorMiddleware); // Error Middleware
+app.use("/upload", express.static("upload")); //Fetching img from upload folder
 
 app.listen(PORT, () => {
   console.log(`Server is Working on http:localhost:${PORT}`);

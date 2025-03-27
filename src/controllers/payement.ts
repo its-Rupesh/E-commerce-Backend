@@ -24,6 +24,30 @@ const newCoupon = async (
     next(new ErrorHandler(error as Error));
   }
 };
+const checknewCoupon = async (
+  req: Request<{}, {}, { coupon: string; amount: number }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { coupon, amount } = req.body;
+    console.log(typeof coupon);
+    console.log(typeof amount);
+    console.log(req.body);
+
+    // const Createdcoupon = await Coupon.create({ coupon, amount });
+
+    return res.status(201).json({
+      success: true,
+      // Createdcoupon: Createdcoupon,
+      coupon,
+      amount,
+    });
+  } catch (error) {
+    console.log(error);
+    next(new ErrorHandler(error as Error));
+  }
+};
 const applyDiscount = async (
   req: Request<{}, {}, {}, { coupon: string }>,
   res: Response,
@@ -82,4 +106,4 @@ const deleteCoupon = async (
   }
 };
 
-export { applyDiscount, deleteCoupon, getAllCoupon, newCoupon };
+export { applyDiscount, deleteCoupon, getAllCoupon, newCoupon, checknewCoupon };
