@@ -28,6 +28,8 @@ config({
 
 // .env Variable
 const MongoDbUrl = process.env.MONGO_URL || "";
+const vercel_url =
+  process.env.VERCEL_URL || "https://e-commerce-frontend-wheat.vercel.app/";
 
 //Mongo Connection
 connectDb(MongoDbUrl);
@@ -40,7 +42,7 @@ export const myCache = new NodeCache();
 //Middleware...
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:8000"] }));
+app.use(cors({ origin: [vercel_url, "http://localhost:8000"] }));
 
 // Routes...
 app.use("/api/v1/user", userRoute);
